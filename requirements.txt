@@ -1,3 +1,6 @@
 requests
 sqlalchemy
 sqlalchemy-postgres-copy
+pandas
+psycopg2-binary
+fire
