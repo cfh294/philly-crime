@@ -12,6 +12,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
+logging.basicConfig(level=logging.DEBUG)
 
 def get_classifer_object(in_name):
     valid = {
@@ -42,9 +43,10 @@ def classify_hour(in_hour):
         return 5
 
 
-def get_classifier(engine_string, in_classifier_name):
+def get_classifier(engine_string, in_classifier_name, use_districts):
     classifier_object = get_classifer_object(in_classifier_name)
-    path = pathlib.Path(".", "classifiers", f"{in_classifier_name.lower()}.pickle")
+    file_name = in_classifier_name.lower() + ("-districts" if use_districts else "-neighborhoods")
+    path = pathlib.Path(".", "classifiers", f"{file_name}.pickle")
     if path.exists():
         with open(str(path), "rb") as file_bytes:
             return pickle.load(file_bytes)
@@ -53,7 +55,7 @@ def get_classifier(engine_string, in_classifier_name):
             df = pandas.read_sql_query(
                 "select * from crimemgr.crime_incident_simple", con=conn
             )
-        x = df.drop(["dc_key", "crime_type"], 1,)
+        x = df.drop(["dc_key", "crime_type", "neighborhood_id" if use_districts else "dc_dist", "neighborhood_name"], 1,)
         y = df.crime_type
 
         x_train, x_test, y_train, y_test = train_test_split(
@@ -64,7 +66,7 @@ def get_classifier(engine_string, in_classifier_name):
         nb.fit(x_train, y_train)
         y_pred = nb.predict(x_test)
 
-        # Model Accuracy & F1 Score - how often is the classifier correct?
+        # Model Accuracy - how often is the classifier correct?
         logging.info(f"{in_classifier_name} accuracy Score: {accuracy_score(y_test, y_pred)}")
 
         with open(str(path), "wb") as file_bytes:
@@ -72,15 +74,15 @@ def get_classifier(engine_string, in_classifier_name):
         return nb
 
 
-def main(engine_string, date, hour, district, classifier_name="MultinomialNB"):
-    classifier = get_classifier(engine_string, classifier_name)
+def main(engine_string, date, hour, area_id, classifier_name="MultinomialNB", use_districts=False):
+    
+    classifier = get_classifier(engine_string, classifier_name, use_districts)
     d = datetime.datetime.strptime(date, "%m/%d/%Y")
     h = classify_hour(hour)
-    in_data = [[int(district), int(d.strftime("%m")), int(d.strftime("%w")), h]]
+    in_data = [[int(area_id), int(d.strftime("%m")), int(d.strftime("%w")), h]]
     logging.info(f"Prediction: {classifier.predict(in_data)[0]}")
 
 
 if __name__ == "__main__":
     fire.Fire(main)
-
 
