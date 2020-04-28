@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block add_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/map.css') }}" />
+<script type="text/javascript" src="{{ url_for('static', filename='js/leaflet-ajax.min.js') }}"></script>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>About</h1>
+            <p>This application attempts to use different data modeling techniques to predict a likely crime for a given
+                district/neighborhood on a given data/time.</p>
+            <p>Our data was sourced from <a href="https://www.opendataphilly.org/">Open Data Philly</a>.</p>
+            <p>The source of this application may be found at our <a
+                    href="https://github.com/cfh294/philly-crime">github</a>.</p>
+            <p>This project was the result of a Data Mining class project, we make no promises about the accuracy of the
+                data or it's predictions.</p>
+            <p>Please stop stealing though, ya'll steal a lot.</p>
+        </div>
+    </div>
+</div>
+<script>
+    $("#about").addClass("active");
+</script>
+{% endblock %}
