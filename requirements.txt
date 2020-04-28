@@ -6,4 +6,4 @@ psycopg2-binary
 fire
 flask
 flask-sqlalchemy
-geoalchemy
+geoalchemy2
