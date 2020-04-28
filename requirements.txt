@@ -8,5 +8,5 @@ flask
 flask-sqlalchemy
 geoalchemy2
 gunicorn
-scikit-learn>=0.22
+scikit-learn==0.21.3
 numpy
