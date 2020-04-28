@@ -3,9 +3,18 @@ from sqlalchemy import Column, Date, DateTime, Float, Integer, String, Table, Te
 from geoalchemy2.types import Geometry
 from sqlalchemy.schema import FetchedValue
 from flask_sqlalchemy import SQLAlchemy
+from geoalchemy2.types import Geometry
 
 
 db = SQLAlchemy()
+
+class CrimeClassifier(db.Model):
+    __tablename__ = 'crime_classifier'
+    __table_args__ = {'schema': 'crimemgr'}
+
+    id = db.Column(db.Text, primary_key=True)
+    description = db.Column(db.Text)
+
 
 class CrimeHourClass(db.Model):
     __tablename__ = 'crime_hour_class'
@@ -15,6 +24,21 @@ class CrimeHourClass(db.Model):
     upper_bound = db.Column(db.Integer)
     classification = db.Column('class', db.Integer, primary_key=True)
     description = db.Column(db.Text)
+
+CrimeIncidentSimple = db.Table(
+    'crime_incident_simple',
+    db.Column('dc_key', db.Text),
+    db.Column('crime_type', db.Text),
+    db.Column('dc_dist', db.Text),
+    db.Column('neighborhood_id', db.Integer),
+    db.Column('neighborhood_name', db.String(20)),
+    db.Column('dispatch_month', db.Float(53)),
+    db.Column('dispatch_weekday', db.Float(53)),
+    db.Column('dispatch_time', db.Integer),
+    db.Column('geom', Geometry),
+    db.Column('dispatch_date_time', db.DateTime),
+    schema='crimemgr'
+)
 
 
 class CrimeModel(db.Model):

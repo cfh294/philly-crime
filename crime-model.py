@@ -9,11 +9,14 @@ import logging
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import CrimeModel
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -23,6 +26,7 @@ def get_classifer_object(in_name):
         "MultinomialNB": MultinomialNB,
         "RandomForestClassifier": RandomForestClassifier,
         "DecisionTreeClassifier": DecisionTreeClassifier,
+        "KNeighborsClassifier": KNeighborsClassifier
     }
     if in_name in valid:
         return valid[in_name]
@@ -63,17 +67,25 @@ def get_classifier(engine_string, in_classifier_name, use_districts, force):
                 "crime_type",
                 "neighborhood_id" if use_districts else "dc_dist",
                 "neighborhood_name",
+                "geom",
+                "dispatch_date_time"
             ],
             1,
         )
         y = df.crime_type
-
         x_train, x_test, y_train, y_test = train_test_split(
             x, y, test_size=0.2, random_state=1
         )
 
-        new_model_object = classifier_object()
-        new_model_object.fit(x_train, y_train)
+        tfidf_transformer = TfidfTransformer()
+        x_train_tfidf = tfidf_transformer.fit_transform(x_train)
+
+        if in_classifier_name == "KNeighborsClassifier":
+            new_model_object = classifier_object(weights="distance")
+        else:
+            new_model_object = classifier_object()
+
+        new_model_object.fit(x_train_tfidf, y_train)
         y_pred = new_model_object.predict(x_test)
 
         # Model Accuracy - how often is the classifier correct?
