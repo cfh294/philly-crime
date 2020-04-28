@@ -87,7 +87,7 @@ def get_page_data(id, model, area_type):
         prediction = crime_model.predict(model_args)[0]
 
         geojson = (
-            db.session.query(func.ST_AsGeoJSON(model.geom, model.id).label("json"))
+            db.session.query(func.ST_AsGeoJSON(model.geom).label("json"))
             .filter_by(id=id)
             .scalar()
         )
