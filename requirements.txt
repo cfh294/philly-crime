@@ -9,4 +9,4 @@ flask-sqlalchemy
 geoalchemy2
 gunicorn
 sklearn
-numpy==1.17.2
+numpy
