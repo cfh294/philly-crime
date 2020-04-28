@@ -30,7 +30,7 @@
                         </div>
                         <div class="form-group">
                             <label for="date">Select a Date and Time</label>
-                            <input required min="{{ calendar }}" value="{{ calendar }}" class="form-control" type="datetime-local" id="date" name="date" />
+                            <input required value="{{ calendar }}" class="form-control" type="datetime-local" id="date" name="date" />
                         </div>
                         <div class="form-group">
                             <label {% if area_type != "d" %}class="invisible"{% endif %} id="district-select-label" for="district-select">Choose a District</label>
