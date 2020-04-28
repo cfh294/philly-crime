@@ -83,6 +83,7 @@ def get_page_data(id, model, area_type):
             .filter_by(area_type=area_type.upper(), classifier=classifier)
             .first()
         )
+
         crime_model = pickle.loads(crime_model.model)
         prediction = crime_model.predict(model_args)[0]
 
