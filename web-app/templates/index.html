@@ -33,14 +33,14 @@
                             <input required min="{{ calendar }}" value="{{ calendar }}" class="form-control" type="datetime-local" id="date" name="date" />
                         </div>
                         <div class="form-group">
-                            <label id="district-select-label" for="district-select">Choose a District</label>
-                            <select required class="form-control" id="district-select" name="district">
+                            <label {% if area_type != "d" %}class="invisible"{% endif %} id="district-select-label" for="district-select">Choose a District</label>
+                            <select id="district-select" name="district" class="form-control" required>
                                 <option value="">Select</option>
                                 {% for d in districts %}
                                     <option value="/district/{{ d.id }}">{{ d.id }}</option>
                                 {% endfor %}
                             </select>
-                            <label class="invisible" id="neighborhood-select-label" for="neighborhood-select">Choose a Neighborhood</label>
+                            <label {% if area_type != "n" %}class="invisible"{% endif %} id="neighborhood-select-label" for="neighborhood-select">Choose a Neighborhood</label>
                             <select class="form-control invisible" id="neighborhood-select" name="neighborhood">
                                 <option value="">Select</option>
                                 {% for n in neighborhoods %}
@@ -112,6 +112,24 @@
                     $("#district-select, #neighborhood-select").on("change", function() {
                         $("form").attr("action", $(this).val());
                     });
+
+                    var area_type = "{{ area_type }}";
+                    var selected = "{{ selected }}";
+                    $("input[name=area-type][value=" + area_type + "]").attr('checked', true);
+                    var $show, $hide;
+                    if (area_type === "d") {
+                        $show = $("#district-select");
+                        $hide = $("#neighborhood-select");
+                    } else {
+                        $hide = $("#district-select");
+                        $show = $("#neighborhood-select");
+                    }
+                    $show.removeClass("invisible");
+                    $show.prop("required", true);
+                    $show.val(selected);
+                    $hide.addClass("invisible");
+                    $hide.prop("required", false);
+                    $hide.val("");
                 });
             </script>
         </div>
