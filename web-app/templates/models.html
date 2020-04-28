@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Sklearn Classifier</th>
+                    <th>Area Type</th>
+                    <th>Accuracy</th>
+                    <th>Last Update</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in model_info %}
+                <tr>
+                    <td>{{ row.classifier }}</td>
+                    <td>{{ "District" if row.area_type == "D" else "Neighborhood" }}</td>
+                    <td>{{ "%.2f"|format(100 * row.accuracy) }}%</td>
+                    <td>{{ row.last_run }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

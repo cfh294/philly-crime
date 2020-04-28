@@ -104,7 +104,6 @@ def get_page_data(id, model, area_type):
             selected=uri,
             area_type=area_type,
             prediction=prediction.lower().capitalize(),
-            # calendar=date.strftime("%Y-%m-%dT%H:%M"),
             calendar=date.strftime("%m/%d/%Y %H:%M %p"),
             x=x,
             y=y,
@@ -127,6 +126,17 @@ def district(id):
 @app.route("/neighborhood/<id>")
 def neighborhood(id):
     return get_page_data(id, Neighborhood, "N")
+
+
+@app.route("/models")
+def models():
+    model_info = db.session.query(
+        CrimeModel.classifier,
+        CrimeModel.area_type,
+        CrimeModel.accuracy, 
+        func.to_char(CrimeModel.last_run, "mm/dd/yyyy").label("last_run")
+    ).order_by(CrimeModel.classifier).all()
+    return render_template("models.html", model_info=model_info)
 
 
 @app.route("/")
