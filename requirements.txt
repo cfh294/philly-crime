@@ -7,3 +7,4 @@ fire
 flask
 flask-sqlalchemy
 geoalchemy2
+gunicorn
