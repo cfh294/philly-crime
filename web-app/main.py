@@ -11,7 +11,6 @@ _philly_x = -75.1652
 _philly_y = 39.9526
 
 app = Flask(__name__)
-app.config["JSONIFY_PRETTYPRINT_REGULAR"] = True
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("h_engine")
 db.init_app(app)
 
