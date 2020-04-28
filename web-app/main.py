@@ -11,7 +11,7 @@ _philly_x = -75.1652
 _philly_y = 39.9526
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("h_engine")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 db.init_app(app)
 
 
