@@ -29,7 +29,7 @@ def get_date_str(in_datetime=datetime.now()):
 
 
 def get_incidents(in_polygon, crime_type):
-    bound = datetime.now() - timedelta(days=10)
+    bound = datetime.now() - timedelta(days=15)
     geojson = (
         db.session.query(func.ST_AsGeoJSON(CrimeIncidentSimple.c.geom).label("json"))
         .filter(

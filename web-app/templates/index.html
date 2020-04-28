@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% block page_name %}Home{% endblock %}
 {% block add_head %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
 <script type="text/javascript" src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
@@ -52,8 +53,6 @@
                             </div>
             
                         </div>
-
-                        
                         <div class="form-group">
                             <label {% if area_type != "d" %}class="invisible"{% endif %} id="district-select-label" for="district-select">Choose a District</label>
                             <select id="district-select" name="district" class="form-control custom-select" required>
@@ -80,7 +79,7 @@
             <hr>
             <h4>Prediction: {{ prediction }}</h4>
             {% if points %}
-                <p>{{ points.features|length }} incident(s) over last 10 days</p>
+                <p>{{ points.features|length }} incident(s) over last 15 days</p>
             {% endif %}
             {% endif %}
         </div>
