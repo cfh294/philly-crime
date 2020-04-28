@@ -14,7 +14,7 @@ select a.dc_key,
             when a.hour >= 7 and hour < 11 then 1 
             when a.hour >= 11 and a.hour < 15 then 2 
             when a.hour >= 15 and a.hour < 19 then 3 
-            when a.hour >= 19 and a.hour < 23 then 4
+            when a.hour >= 19 and a.hour <= 23 then 4
             else 5 end as dispatch_time
 from crimemgr.crime_incident a 
 left join crimemgr.neighborhood b on st_contains(b.geom, a.the_geom)

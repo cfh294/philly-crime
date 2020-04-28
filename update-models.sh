@@ -9,7 +9,7 @@ fi
 
 for c in "DecisionTreeClassifier" "MultinomialNB" "RandomForestClassifier"; do
     echo "${c} - Using Neighborhoods"
-    python3 ${wd}/crime-model.py --engine-string "${1}" --date "04/26/2020" --hour 12 --area-id 8 --classifier-name ${c}
+    python3 ${wd}/crime-model.py --engine-string "${1}" --classifier-name ${c} --force
     echo "${c} - Using Districts"
-    python3 ${wd}/crime-model.py --engine-string "${1}" --date "04/26/2020" --hour 12 --area-id 8 --classifier-name ${c} --use-districts
+    python3 ${wd}/crime-model.py --engine-string "${1}" --classifier-name ${c} --use-districts --force
 done

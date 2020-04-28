@@ -1,0 +1,120 @@
+{% extends "layout.html" %}
+{% block add_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+<script type="text/javascript" src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/map.css') }}" />
+<script type="text/javascript" src="{{ url_for('static', filename='js/leaflet-ajax.min.js') }}"></script>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Form</h2>
+                    <form action="">
+                        <div class="form-group">
+                            <label for="area-types">Choose an Area Type</label>
+                            <div class="form-check" id="area-types">
+                                <input class="form-check-input" type="radio" name="area-type" id="area-type-district" value="d" checked>
+                                <label class="form-check-label" for="area-type-district">
+                                  Police Districts
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="area-type" id="area-type-neighborhood" value="n">
+                                <label class="form-check-label" for="area-type-neighborhood">
+                                  Neighborhoods
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Select a Date and Time</label>
+                            <input required min="{{ calendar }}" value="{{ calendar }}" class="form-control" type="datetime-local" id="date" name="date" />
+                        </div>
+                        <div class="form-group">
+                            <label id="district-select-label" for="district-select">Choose a District</label>
+                            <select required class="form-control" id="district-select" name="district">
+                                <option value="">Select</option>
+                                {% for d in districts %}
+                                    <option value="/district/{{ d.id }}">{{ d.id }}</option>
+                                {% endfor %}
+                            </select>
+                            <label class="invisible" id="neighborhood-select-label" for="neighborhood-select">Choose a Neighborhood</label>
+                            <select class="form-control invisible" id="neighborhood-select" name="neighborhood">
+                                <option value="">Select</option>
+                                {% for n in neighborhoods %}
+                                    <option value="/neighborhood/{{ n.id }}">{{ n.mapname }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group text-center">
+                            <button class="btn btn-md btn-success" type="submit">Predict</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% if prediction %}
+            <hr>
+            <h4>Prediction: {{ prediction }}</h4>
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <h2>Map</h2>
+            <div id="map"></div>
+            <script type="text/javascript" >
+                $(function () {
+
+                    var mymap = L.map("map", {
+                        center: [{{ y }}, {{ x }}], 
+                        zoom: 15,
+                        zoomControl: false,
+                        doubleClickZoom: false,
+                        dragging: false,
+                        boxZoom: false
+                    });
+                    
+                    L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}{r}.{ext}', {
+                        attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                        subdomains: 'abcd',
+                        minZoom: 0,
+                        maxZoom: 20,
+                        ext: 'png'
+                    }).addTo(mymap);
+                    
+                    {% if geojson %}
+                    var current_area = L.geoJSON({{ geojson|safe }});
+                    current_area.addTo(mymap);
+                    mymap.fitBounds(current_area.getBounds());
+                    {% endif %}
+                    
+                    var uri;
+                    var atype;
+                    $("input[type=radio][name='area-type']").on("change", function() {
+                        atype = $(this).val();
+                        $("form").attr("action", "");
+                        if (atype === "n") {
+                            $("#district-select").addClass("invisible");
+                            $("#district-select").prop("required", false);
+                            $("#district-select-label").addClass("invisible");
+                            $("#neighborhood-select").removeClass("invisible");
+                            $("#neighborhood-select").prop("required", true);
+                            $("#neighborhood-select-label").removeClass("invisible");
+                        } else {
+                            $("#district-select").removeClass("invisible");
+                            $("#district-select").prop("required", true);
+                            $("#district-select-label").removeClass("invisible");
+                            $("#neighborhood-select").addClass("invisible");
+                            $("#neighborhood-select").prop("required", false);
+                            $("#neighborhood-select-label").addClass("invisible");
+                        }
+                    });
+                    $("#district-select, #neighborhood-select").on("change", function() {
+                        $("form").attr("action", $(this).val());
+                    });
+                });
+            </script>
+        </div>
+    </div>
+</div>
+{% endblock %}

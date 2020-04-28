@@ -6,6 +6,9 @@ import datetime
 import pickle
 import pathlib
 import logging
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models import CrimeModel
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -26,30 +29,20 @@ def get_classifer_object(in_name):
         raise IOError(f"Invalid classifier name specified. Must pick one of the following: {', '.join(list(valid.keys()))}")
 
 
-def classify_hour(in_hour):
-    if in_hour < 0 or in_hour > 23:
-        raise IOError("Hour must be from 0-23")
-    elif 7 < in_hour >= 3:
-        return 0 
-    elif 11 < in_hour >= 7:
-        return 1
-    elif 15 < in_hour >= 11:
-        return 2 
-    elif 19 < in_hour >= 15:
-        return 3 
-    elif 23 < in_hour >= 19:
-        return 4
-    else:
-        return 5
+def get_classifier(engine_string, in_classifier_name, use_districts, force):
 
+    session = sessionmaker(bind=create_engine(engine_string))() 
 
-def get_classifier(engine_string, in_classifier_name, use_districts):
-    classifier_object = get_classifer_object(in_classifier_name)
-    file_name = in_classifier_name.lower() + ("-districts" if use_districts else "-neighborhoods")
-    path = pathlib.Path(".", "classifiers", f"{file_name}.pickle")
-    if path.exists():
-        with open(str(path), "rb") as file_bytes:
-            return pickle.load(file_bytes)
+    area_type = "D" if use_districts else "N"
+    classifier_object = get_classifer_object(in_classifier_name)         
+    check = session.query(CrimeModel).filter_by(classifier=in_classifier_name, area_type=area_type).first()
+    if check and not force:
+        logging.info("Loading model from database.")
+        logging.info(f"Model: {check.classifier}")
+        logging.info(f"Area Type: {'Neighborhoods' if check.area_type == 'N' else 'Districts'}")
+        logging.info(f"Accuracy score: {check.accuracy}")
+        logging.info(f"Last Run: {check.last_run.strftime('%m/%d/%Y')}")
+        return pickle.loads(check.model)
     else:
         with psycopg2.connect(engine_string) as conn:
             df = pandas.read_sql_query(
@@ -62,25 +55,22 @@ def get_classifier(engine_string, in_classifier_name, use_districts):
             x, y, test_size=0.2, random_state=1
         )
 
-        nb = classifier_object()
-        nb.fit(x_train, y_train)
+        new_model_object = classifier_object()
+        new_model_object.fit(x_train, y_train)
         y_pred = nb.predict(x_test)
 
         # Model Accuracy - how often is the classifier correct?
-        logging.info(f"{in_classifier_name} accuracy Score: {accuracy_score(y_test, y_pred)}")
+        score = accuracy_score(y_test, y_pred)
+        logging.info("Model loaded to database.")
+        logging.info(f"Accuracy score: {score}")
+        new_model = CrimeModel(classifier=in_classifier_name, area_type=area_type, accuracy=score, last_run=datetime.datetime.now(), model=pickle.dumps(new_model_object))
+        session.merge(new_model)
+        session.commit()
+        session.close()
+        return new_model_object
 
-        with open(str(path), "wb") as file_bytes:
-            pickle.dump(nb, file_bytes)
-        return nb
-
-
-def main(engine_string, date, hour, area_id, classifier_name="MultinomialNB", use_districts=False):
-    
-    classifier = get_classifier(engine_string, classifier_name, use_districts)
-    d = datetime.datetime.strptime(date, "%m/%d/%Y")
-    h = classify_hour(hour)
-    in_data = [[int(area_id), int(d.strftime("%m")), int(d.strftime("%w")), h]]
-    logging.info(f"Prediction: {classifier.predict(in_data)[0]}")
+def main(engine_string, classifier_name, use_districts=False, force=False):
+    get_classifier(engine_string, classifier_name, use_districts, force)
 
 
 if __name__ == "__main__":
