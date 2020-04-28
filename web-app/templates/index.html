@@ -4,6 +4,10 @@
 <script type="text/javascript" src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/map.css') }}" />
 <script type="text/javascript" src="{{ url_for('static', filename='js/leaflet-ajax.min.js') }}"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
 {% endblock %}
 {% block content %}
 <div class="container">
@@ -15,7 +19,7 @@
                     <form action="">
                         <div class="form-group">
                             <label for="class-types">Choose a Classifier</label>
-                            <select id="classifier" name="classifier" class="form-control" required>
+                            <select id="classifier" name="classifier" class="form-control custom-select" required>
                                 <option value="">Select</option>
                                 {% for c in classifiers %}
                                 <option value="{{ c.id }}">{{ c.description }}</option>
@@ -39,18 +43,27 @@
                         </div>
                         <div class="form-group">
                             <label for="date">Select a Date and Time</label>
-                            <input required value="{{ calendar }}" class="form-control" type="datetime-local" id="date" name="date" />
+
+                            <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                                <input name="date" value="{{ calendar }}" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1"/>
+                                <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+            
                         </div>
+
+                        
                         <div class="form-group">
                             <label {% if area_type != "d" %}class="invisible"{% endif %} id="district-select-label" for="district-select">Choose a District</label>
-                            <select id="district-select" name="district" class="form-control" required>
+                            <select id="district-select" name="district" class="form-control custom-select" required>
                                 <option value="">Select</option>
                                 {% for d in districts %}
                                     <option value="/district/{{ d.id }}">{{ d.id }}</option>
                                 {% endfor %}
                             </select>
                             <label {% if area_type != "n" %}class="invisible"{% endif %} id="neighborhood-select-label" for="neighborhood-select">Choose a Neighborhood</label>
-                            <select class="form-control invisible" id="neighborhood-select" name="neighborhood">
+                            <select class="form-control custom-select invisible" id="neighborhood-select" name="neighborhood">
                                 <option value="">Select</option>
                                 {% for n in neighborhoods %}
                                     <option value="/neighborhood/{{ n.id }}">{{ n.mapname }}</option>
@@ -166,7 +179,10 @@
                     });
                 });
                 $("#home").addClass("active");
-
+                
+                $(function () {
+                    $('#datetimepicker1').datetimepicker();
+                });
 
             </script>
         </div>

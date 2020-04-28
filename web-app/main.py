@@ -5,7 +5,7 @@ import pickle
 from datetime import datetime, timedelta
 from flask import Flask, render_template, make_response, jsonify, request
 from sqlalchemy import func, between, and_
-from .models import (
+from models import (
     db,
     District,
     Neighborhood,
@@ -25,7 +25,7 @@ db.init_app(app)
 
 
 def get_date_str(in_datetime=datetime.now()):
-    return in_datetime.strftime("%Y-%m-%dT%H:%M")
+    return in_datetime.strftime("%m/%d/%Y %H:%M %p")
 
 
 def get_incidents(in_polygon, crime_type):
@@ -59,7 +59,7 @@ def get_all_geoms():
 def get_page_data(id, model, area_type):
     classifier = request.args.get("classifier")
     date = request.args.get("date")
-    date = datetime.strptime(date, "%Y-%m-%dT%H:%M")
+    date = datetime.strptime(date, "%m/%d/%Y %H:%M %p")
     hour = int(date.strftime("%H"))
     hour = (
         db.session.query(CrimeHourClass.classification)
@@ -104,7 +104,8 @@ def get_page_data(id, model, area_type):
             selected=uri,
             area_type=area_type,
             prediction=prediction.lower().capitalize(),
-            calendar=date.strftime("%Y-%m-%dT%H:%M"),
+            # calendar=date.strftime("%Y-%m-%dT%H:%M"),
+            calendar=date.strftime("%m/%d/%Y %H:%M %p"),
             x=x,
             y=y,
             geojson=geojson,
