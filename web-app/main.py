@@ -28,12 +28,14 @@ _philly_y = 39.9526
 csp = {
     "default-src": [
         "'self'",
+        "https://kit-free.fontawesome.com",
         "https://unpkg.com",
         "https://cdnjs.cloudflare.com",
         "https://kit.fontawesome.com",
         "https://maxcdn.bootstrapcdn.com",
         "https://code.jquery.com",
-        "https://cdn.jsdelivr.net"
+        "https://cdn.jsdelivr.net",
+        "https://stamen-tiles-\{s\}.a.ssl.fastly.net"
     ]
 }
 
