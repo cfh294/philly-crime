@@ -36,6 +36,7 @@ csp = {
         "https://code.jquery.com",
         "https://cdn.jsdelivr.net",
     ],
+    "img-src": '*',
 }
 
 # wsgi config
