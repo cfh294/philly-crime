@@ -34,19 +34,19 @@ csp = {
     'style-src': '\'unsafe-inline\' \'self\'',
     'script-src': '\'unsafe-inline\' \'self\'',
 }
-csp = {
-    "default-src": [
-        "'self'",
-        "https://kit-free.fontawesome.com",
-        "https://unpkg.com",
-        "https://cdnjs.cloudflare.com",
-        "https://kit.fontawesome.com",
-        "https://maxcdn.bootstrapcdn.com",
-        "https://code.jquery.com",
-        "https://cdn.jsdelivr.net",
-        "https://stamen-tiles-\{s\}.a.ssl.fastly.net"
-    ], 
-}
+# csp = {
+#     "default-src": [
+#         "'self'",
+#         "https://kit-free.fontawesome.com",
+#         "https://unpkg.com",
+#         "https://cdnjs.cloudflare.com",
+#         "https://kit.fontawesome.com",
+#         "https://maxcdn.bootstrapcdn.com",
+#         "https://code.jquery.com",
+#         "https://cdn.jsdelivr.net",
+#         "https://stamen-tiles-\{s\}.a.ssl.fastly.net"
+#     ], 
+# }
 
 # wsgi config
 app = Flask(__name__)
