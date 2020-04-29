@@ -37,12 +37,13 @@ csp = {
         "https://cdn.jsdelivr.net",
     ],
     "img-src": '*',
+    'script-src': '\'self\'',
 }
 
 # wsgi config
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
-Talisman(app, content_security_policy=csp, content_security_policy_nonce_in=["script-src"])
+# Talisman(app, content_security_policy=csp, content_security_policy_nonce_in=["script-src"])
 db.init_app(app)
 
 
