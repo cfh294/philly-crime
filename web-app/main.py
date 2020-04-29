@@ -26,27 +26,24 @@ _philly_y = 39.9526
 
 # security policy
 csp = {
-    'default-src': '\'self\'',
+    "default-src": [
+        "'self'",
+        "https://kit-free.fontawesome.com",
+        "https://unpkg.com",
+        "https://cdnjs.cloudflare.com",
+        "https://kit.fontawesome.com",
+        "https://maxcdn.bootstrapcdn.com",
+        "https://code.jquery.com",
+        "https://cdn.jsdelivr.net",
+        "https://stamen-tiles-\{s\}.a.ssl.fastly.net"
+    ],
     'img-src': '\'self\' data:',
     'media-src': [
         '*',
     ],
-    'style-src': '\'unsafe-inline\' \'self\'',
-    'script-src': '\'unsafe-inline\' \'self\'',
+    'style-src': '\'self\'',
+    'script-src': '\'self\'',
 }
-# csp = {
-#     "default-src": [
-#         "'self'",
-#         "https://kit-free.fontawesome.com",
-#         "https://unpkg.com",
-#         "https://cdnjs.cloudflare.com",
-#         "https://kit.fontawesome.com",
-#         "https://maxcdn.bootstrapcdn.com",
-#         "https://code.jquery.com",
-#         "https://cdn.jsdelivr.net",
-#         "https://stamen-tiles-\{s\}.a.ssl.fastly.net"
-#     ], 
-# }
 
 # wsgi config
 app = Flask(__name__)
