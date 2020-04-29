@@ -1,1 +1,1 @@
-web: GUNICORN_CMD_ARGS="--keep-alive 20" gunicorn web-app.main:app
+web: GUNICORN_CMD_ARGS="-t 10" gunicorn web-app.main:app
