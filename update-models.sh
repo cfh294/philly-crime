@@ -1,4 +1,5 @@
 #!/bin/bash
+# Utility script to update our most-used models
 set -e
 wd=$(dirname "$0")
 

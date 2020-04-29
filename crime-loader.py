@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+Script that loads crime incident data from Open Data Philly into 
+a PostgreSQL database
+"""
 import argparse
 import requests
 import urllib
@@ -13,9 +17,11 @@ from models import CrimeIncident
 from sqlalchemy import func, create_engine
 from sqlalchemy.orm import sessionmaker
 
+# configure logging
 logging.basicConfig(level=logging.DEBUG)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
 
+# some constants
 _days = 365
 _sql = pathlib.Path(".", "sql")
 _schema_ddl = str(_sql / "crimemgr.ddl.sql")
@@ -24,11 +30,17 @@ _max_date_dml = str(_sql / "max_date.dml.sql")
 
 
 def file_to_string(in_file):
+    """
+    Read contents of file to a string variable
+    """
     with open(in_file, "r") as f:
         return f.read()
 
 
 def with_args(f):
+    """
+    Argument parsing on the command line
+    """
     def with_args_(*args, **kwargs):
         ap = argparse.ArgumentParser(description="Pull down Philadelphia crime incident data.")
         ap.add_argument("-e", "--engine-string", type=str, required=True, help="Database engine string")
@@ -37,6 +49,9 @@ def with_args(f):
     return with_args_
 
 def insert_to_db(engine, rows):
+    """
+    Encapsulated logic for inserting a new incident into the database
+    """
     try:
         with open("/tmp/tmp.csv", "w") as csv_file:
             header = ["hour" if h == "hour_" else h for h in list(rows[0].keys())]
@@ -52,8 +67,13 @@ def insert_to_db(engine, rows):
         sys.exit()
 
 def load_data(engine, max_date):
-    url = "https://phl.carto.com/api/v2/sql?q=SELECT * FROM incidents_part1_part2"
+    """
+    Bulk of the program, loads crafts queries to both the database and the API.
+    """
 
+    url = "https://phl.carto.com/api/v2/sql?q=SELECT * FROM incidents_part1_part2"
+    
+    # limit the query by latest date in db
     if max_date:
         max_date_str = max_date.strftime('%Y-%m-%d %H:%M:%S')
         logging.info(f"Finding incidents that occurred after '{max_date_str}'")
@@ -66,13 +86,14 @@ def load_data(engine, max_date):
                 insert_to_db(engine, rows)
             else:
                 logging.info("No new data found.")
+    
+    # get all data from API endpoint
     else:
 
         max_date_1_obj = datetime.datetime.now()
         max_date_2_obj = max_date_1_obj - datetime.timedelta(days=_days)
         max_date_1_str = max_date_1_obj.strftime("%Y-%m-%d %H:%M:%S")
         max_date_2_str = max_date_2_obj.strftime("%Y-%m-%d %H:%M:%S")
-
         keep_going = True
 
         while keep_going:
@@ -94,11 +115,15 @@ def load_data(engine, max_date):
 
 @with_args
 def main(cmd_line):
+    """
+    Main method, run the program
+    """
     engine = create_engine(cmd_line.engine_string, isolation_level="AUTOCOMMIT")
     engine.execute(file_to_string(_schema_ddl))
     engine.execute(file_to_string(_table_ddl))
     max_date = engine.execute(func.max(CrimeIncident.dispatch_date_time)).scalar()
     load_data(engine, max_date)
+    
     
 if __name__ == "__main__":
     main()
