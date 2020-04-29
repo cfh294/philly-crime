@@ -1,6 +1,6 @@
-# [Philly Crime](http://www.philly-crime.com)
+# [Philly Crime](https://www.philly-crime.com)
 
-This repository contains the codebase for [philly-crime.com](http://www.philly-crime.com). Currently, this website exists as a front end to play around with the crime prediction models developed for a Datamining I project at Rowan University
+This repository contains the codebase for [philly-crime.com](https://www.philly-crime.com). Currently, this website exists as a front end to play around with the crime prediction models developed for a Datamining I project at Rowan University
 
 ## Loading Data
 
