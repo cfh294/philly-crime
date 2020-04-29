@@ -36,7 +36,9 @@ csp = {
         "https://code.jquery.com",
         "https://cdn.jsdelivr.net",
         "https://stamen-tiles-\{s\}.a.ssl.fastly.net"
-    ]
+    ], 
+    "script-src": ["'self'", "'unsafe-inline'"],
+    "style-src": ["'self'", "'unsafe-inline'"]
 }
 
 # wsgi config
