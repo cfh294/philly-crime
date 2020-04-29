@@ -6,6 +6,7 @@ psycopg2-binary
 fire
 flask
 flask-sqlalchemy
+flask-tailsman
 geoalchemy2
 gunicorn
 scikit-learn==0.21.3

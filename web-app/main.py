@@ -7,6 +7,7 @@ import os
 import pickle
 from datetime import datetime, timedelta
 from flask import Flask, render_template, make_response, jsonify, request
+from flask_talisman import Talisman
 from sqlalchemy import func, between, and_
 from .models import (
     db,
@@ -26,6 +27,7 @@ _philly_y = 39.9526
 # wsgi config
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+Talisman(app)
 db.init_app(app)
 
 
