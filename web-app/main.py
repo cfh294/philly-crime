@@ -28,19 +28,19 @@ _philly_y = 39.9526
 csp = {
     "default-src": [
         "'self'",
-        "https://unpkg.com/*",
-        "https://cdnjs.cloudflare.com/*",
-        "https://kit.fontawesome.com/*",
-        "https://maxcdn.*",
-        "https://code.jquery.com/*",
-        "https://cdn.jsdelivr.net/*"
+        "https://unpkg.com",
+        "https://cdnjs.cloudflare.com",
+        "https://kit.fontawesome.com",
+        "https://maxcdn.bootstrapcdn.com",
+        "https://code.jquery.com",
+        "https://cdn.jsdelivr.net"
     ]
 }
 
 # wsgi config
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
-Talisman(app, content_security_policy=csp)
+Talisman(app, content_security_policy=csp, content_security_policy_nonce_in=["script-src"])
 db.init_app(app)
 
 
