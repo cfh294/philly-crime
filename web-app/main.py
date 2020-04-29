@@ -35,14 +35,7 @@ csp = {
         "https://maxcdn.bootstrapcdn.com",
         "https://code.jquery.com",
         "https://cdn.jsdelivr.net",
-        "https://stamen-tiles-\{s\}.a.ssl.fastly.net"
     ],
-    'img-src': '\'self\' data:',
-    'media-src': [
-        '*',
-    ],
-    'style-src': '\'self\'',
-    'script-src': '\'self\'',
 }
 
 # wsgi config
