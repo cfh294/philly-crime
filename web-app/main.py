@@ -26,6 +26,15 @@ _philly_y = 39.9526
 
 # security policy
 csp = {
+    'default-src': '\'self\'',
+    'img-src': '\'self\' data:',
+    'media-src': [
+        '*',
+    ],
+    'style-src': '\'unsafe-inline\' \'self\'',
+    'script-src': '\'unsafe-inline\' \'self\'',
+}
+csp = {
     "default-src": [
         "'self'",
         "https://kit-free.fontawesome.com",
